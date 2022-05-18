@@ -1,14 +1,22 @@
 import './styles.css';
 import React, { useState, useEffect } from 'react';
-import { Card } from '../../components/Card';
+import { Card, CardProps } from '../../components/Card';
+type APIResponse = {
+  name:string
+  avatar_url:string
+}
+type User = {
+  name:string
+  avatar:string
+}
 export function Home() {
   const [studentName, setStudentName] = useState(''); //Usa-se o useState para criar um estado, que é uma maneira de atualizar o valor de uma variável no front-end. O primeiro parâmetro é a variável que será atualizada, e o segundo é a função que atualiza o valor da variável.
-  const [student, setStudent] = useState([]);
-  const [user, setUser] = useState({name:"", avatar:""});
-  const id = student.length + 1;
+  const [student, setStudent] = useState<CardProps[]>([]);
+  const [user, setUser] = useState<User>({} as User);
+  const key = student.length + 1;
   function handleAddStudent() {
     const newStudent = {
-      id,
+      key,
       name: studentName,
       time: new Date().toLocaleTimeString("pt-BR",{hour: '2-digit', minute:'2-digit', second:'2-digit'})
     }
@@ -18,7 +26,7 @@ export function Home() {
   useEffect(() => {
     //Corpo do useEffect. Aquilo que eu quero que execute.
     fetch('https://api.github.com/users/ItaloPereiraDev')
-    .then(response => response.json())
+    .then(response => response.json() as Promise<APIResponse>)
     .then(data => {
       setUser({
         name: data.name,
@@ -48,7 +56,7 @@ export function Home() {
     />
     <button type="submit" onClick={handleAddStudent}>Adicionar</button>
     {
-      student.map(student => <Card key={student.id} name={student.name} time={student.time} />)
+      student.map(student => <Card key={student.key} name={student.name} time={student.time} />)
     }
     </div>
   )
